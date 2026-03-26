@@ -82,14 +82,24 @@ qq-invoice-downloader/
 
 ## 配置
 
-编辑脚本顶部的配置项：
+通过环境变量配置（**不会上传到 GitHub**，保护你的隐私）：
 
-```python
-EMAIL = "181957682@qq.com"           # 邮箱账号
-PASSWORD = "dcdrfqjmoczrbhdj"        # 授权码（不是登录密码）
-IMAP_SERVER = "imap.qq.com"
-BASE_DIR = r"Z:\OpenClaw\InvoiceOC"  # 输出目录
+```bash
+# Windows
+set QQ_EMAIL=你的QQ邮箱
+set QQ_PASSWORD=你的QQ邮箱授权码
+set INVOICE_BASE_DIR=Z:\OpenClaw\InvoiceOC
+
+# macOS/Linux
+export QQ_EMAIL=你的QQ邮箱
+export QQ_PASSWORD=你的QQ邮箱授权码
+export INVOICE_BASE_DIR=/path/to/InvoiceOC
+
+# 运行
+python invoice_downloader_v82.py 260201 260310
 ```
+
+> ⚠️ 授权码不是登录密码，是 QQ 邮箱「设置 → 账户 → POP3/IMAP/SMTP」里生成的授权码。
 
 ## 版本历史
 

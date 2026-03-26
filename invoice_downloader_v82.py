@@ -118,10 +118,10 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # ============== 配置常量 ==============
-EMAIL = "181957682@qq.com"
-PASSWORD = "dcdrfqjmoczrbhdj"
+EMAIL = os.environ.get("QQ_EMAIL", "")
+PASSWORD = os.environ.get("QQ_PASSWORD", "")
 IMAP_SERVER = "imap.qq.com"
-BASE_DIR = r"Z:\04_Moment_Lab\01_年茂市场营销策划有限公司财务资料\01_网银对账单\2026 网银对账"
+BASE_DIR = os.environ.get("INVOICE_BASE_DIR", r"Z:\OpenClaw\InvoiceOC")
 
 # 重试配置
 MAX_RETRIES = 5  # v7.5: 增加重试次数
@@ -2555,6 +2555,13 @@ def parse_date(date_str: str) -> Optional[date]:
 
 def main():
     print_header()
+
+    # 环境变量检查
+    if not EMAIL or not PASSWORD:
+        print("❌ 请设置环境变量 QQ_EMAIL 和 QQ_PASSWORD")
+        print("   Windows: set QQ_EMAIL=你的邮箱 QQ_PASSWORD=你的授权码")
+        print("   或在运行前设置环境变量")
+        return
 
     if len(sys.argv) >= 3:
         date_from = parse_date(sys.argv[1])
