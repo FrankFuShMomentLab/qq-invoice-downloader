@@ -104,7 +104,15 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 
 # 导入智能分析器
-from invoice_analyzer import InvoiceAnalyzer, InvoiceType, DownloadStrategy
+# Phase 1: 尝试使用 LLM 增强版分析器，失败则回退到原始版本
+try:
+    from invoice_analyzer_v9 import InvoiceAnalyzerWithLLM as InvoiceAnalyzerCls
+    from invoice_analyzer import InvoiceType, DownloadStrategy  # 保留 enum 引用
+    print("✅ Phase 1: LLM 增强分析器已加载")
+except ImportError:
+    from invoice_analyzer import InvoiceAnalyzer, InvoiceType, DownloadStrategy
+    InvoiceAnalyzerCls = InvoiceAnalyzer
+    print("ℹ️ 使用纯硬编码分析器 (v8.2 模式)")
 
 # 配置日志
 logging.basicConfig(
@@ -538,7 +546,7 @@ class EnhancedBrowserPool:
         self._initialized = False
         self._lock = Lock()
         self._page_count = 0
-        self.analyzer = InvoiceAnalyzer()
+        self.analyzer = InvoiceAnalyzerCls()
         # v8.2: 新增智能检测器
         self.button_detector = SmartButtonDetector()
         self.platform_detector = PlatformDetector()
@@ -1914,7 +1922,7 @@ class SmartInvoiceDownloader:
 
         self.http_pool = ConnectionPool()
         self.browser_pool = EnhancedBrowserPool()
-        self.analyzer = InvoiceAnalyzer()
+        self.analyzer = InvoiceAnalyzerCls()
         
         self.detailed_results: List[EmailProcessingResult] = []
 
