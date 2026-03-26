@@ -25,7 +25,7 @@ class MiniMaxLLM:
 
     BASE_URL = "https://api.minimaxi.com/v1"
 
-    def __init__(self, api_key: str = None, model: str = "MiniMax-M2.5-Lightning"):
+    def __init__(self, api_key: str = None, model: str = "MiniMax-M2.7"):
         self.api_key = api_key or os.environ.get("MINIMAX_API_KEY", "")
         self.model = model
         if not self.api_key:
@@ -63,10 +63,12 @@ class MiniMaxLLM:
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
                 result = json.loads(resp.read().decode("utf-8"))
-                return result["choices"][0]["message"]["content"]
+                msg = result["choices"][0]["message"]
+                # MiniMax 模型：content 可能为空，内容在 reasoning_content
+                return msg.get("content") or msg.get("reasoning_content") or ""
         except urllib.error.HTTPError as e:
             body = json.loads(e.read().decode("utf-8"))
-            raise RuntimeError(f"LMM API 错误 {e.code}: {body.get('error', body)}")
+            raise RuntimeError(f"LLM API 错误 {e.code}: {body.get('error', body)}")
 
 
 # ===== 分析结果结构 =====
@@ -150,10 +152,10 @@ SYSTEM_PROMPT = """你是一个专业的发票下载专家，擅长分析各种�
 
 USER_PROMPT_TEMPLATE = """## 邮件信息
 - 主题：{subject}
-- 正文（前2000字符）：
-{text[:2000]}
-- HTML内容（前2000字符）：
-{html[:2000]}
+- 正文：
+{text}
+- HTML内容：
+{html}
 - 是否有附件：{has_attachments}
 
 请分析这张发票邮件，输出JSON。"""
