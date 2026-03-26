@@ -68,3 +68,60 @@ python invoice_downloader_v82.py 260201 260310
 > ⚠️ Playwright 浏览器必须串行！多线程要加 Lock！
 >
 > greenlet.error: cannot switch to a different thread — 这是多线程并行 Playwright 导致。解决方案：单浏览器串行，通过 threading.Lock() 保证线程安全。
+
+---
+
+## Phase 1.5 - LLM 增强分析（invoice_analyzer_v9）
+
+### LLM 触发条件
+
+`InvoiceAnalyzerWithLLM` 在以下情况自动调用 MiniMax LLM：
+
+| 条件 | 说明 |
+|------|------|
+| `confidence < 0.7` | 硬编码置信度不足 |
+| `invoice_type == "unknown"` | 平台不在已知列表中 |
+
+策略：硬编码优先 → 置信度不足或类型未知 → LLM fallback → 取置信度更高者
+
+### MINIMAX_API_KEY 配置
+
+```bash
+# 设置环境变量（Windows PowerShell）
+$env:MINIMAX_API_KEY = "your-api-key-here"
+
+# 或在 Python 中直接传入
+from invoice_analyzer_v9 import InvoiceAnalyzerWithLLM
+analyzer = InvoiceAnalyzerWithLLM(api_key="your-api-key-here")
+
+# 不设置 → 纯硬编码模式（v8.2 兼容行为）
+```
+
+### 测试方法
+
+```bash
+cd qq-invoice-downloader
+
+# 语法检查
+python -m py_compile invoice_downloader_v82.py
+python -m py_compile invoice_analyzer_v9.py
+
+# 导入验证
+python -c "from invoice_analyzer_v9 import InvoiceAnalyzerWithLLM; print('import OK')"
+
+# 运行集成测试（使用 unittest，pytest 可选）
+python test/test_analyzer.py
+
+# 或用 pytest
+python -m pytest test/test_analyzer.py -v
+```
+
+### 测试覆盖
+
+| 测试类 | 验证点 |
+|--------|--------|
+| `TestKnownPlatforms` | 和运国际/诺诺网/中海油 → 置信度 ≥ 0.7，不触发 LLM |
+| `TestUnknownPlatformTriggersLLM` | 未知平台 → LLM 被调用并胜出 |
+| `TestLLMWinsWhenBetter` | LLM 置信度 > 硬编码 → 使用 LLM |
+| `TestFallbackPreservesBaseResult` | LLM 异常 → 保留硬编码结果 |
+| `TestNonInvoiceSkip` | 非发票邮件 → unknown 类型 |
