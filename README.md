@@ -4,6 +4,21 @@
 
 ---
 
+## 一键安装（Windows）
+
+```bat
+# 方法1: 一键安装脚本（推荐）
+# 下载仓库后双击 install.bat
+
+# 方法2: 命令行
+git clone https://github.com/FrankFuShMomentLab/qq-invoice-downloader.git %TEMP%\qq-invoice-downloader
+xcopy /e /i /y %TEMP%\qq-invoice-downloader %USERPROFILE%\.openclaw\skills\qq-invoice-downloader
+```
+
+安装后**重启 OpenClaw** 即可生效。
+
+---
+
 ## 快速开始
 
 ```bash
