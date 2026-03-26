@@ -21,6 +21,16 @@ class InvoiceType(Enum):
     SHUNFENG = "shunfeng"                    # 顺丰
     CNOOC = "cnooc"                         # 中海油
     TRAIN_12306 = "train_12306"             # 12306火车票
+    # ---- Phase 2 新增平台 ----
+    EXPRESS = "express"                      # 快递物流 (邮政/中通/韵达/圆通/申通)
+    ECOMMERCE = "ecommerce"                  # 电商平台 (京东/拼多多/美团/饿了么/大众点评)
+    TRANSPORT = "transport"                  # 出行平台 (滴滴/高德/曹操)
+    TRAVEL = "travel"                        # 旅游出行 (携程/同程/飞猪/酒店)
+    TECH = "tech"                            # 科技云服务 (腾讯/阿里云/华为云/京东云)
+    OPERATOR = "operator"                    # 运营商 (移动/联通/电信)
+    BANK = "bank"                            # 银行 (招商/平安)
+    BAIWANG = "baiwang"                      # 百旺金穗云
+    PIAOYITONG = "piaoyitong"                # 票易通
     UNKNOWN = "unknown"                      # 未知类型
 
 class DownloadStrategy(Enum):
@@ -61,7 +71,8 @@ class InvoiceAnalyzer:
         InvoiceType.HANGTIAN: [
             'hangtian',
             '航天',
-            '航天信息'
+            '航天信息',
+            'aisino'
         ],
         InvoiceType.SHUNFENG: [
             'sf-express',
@@ -79,6 +90,88 @@ class InvoiceAnalyzer:
             '12306',
             '铁路',
             '火车票'
+        ],
+        # ---- Phase 2 新增平台 ----
+        InvoiceType.BAIWANG: [
+            'baiwang',
+            '百旺金穗云',
+            'baiwang.com',
+            '百旺'
+        ],
+        InvoiceType.PIAOYITONG: [
+            'piaoyitong',
+            '票易通',
+            'piaoyitong.com'
+        ],
+        InvoiceType.EXPRESS: [
+            'ems.com.cn',
+            '中国邮政',
+            'EMS',
+            'zto.com',
+            '中通快递',
+            'yundaex.com',
+            '韵达',
+            'yto.net.cn',
+            '圆通',
+            'sto.cn',
+            '申通'
+        ],
+        InvoiceType.ECOMMERCE: [
+            'jd.com',
+            '京东',
+            'pinduoduo.com',
+            '拼多多',
+            'meituan.com',
+            '美团',
+            'ele.me',
+            '饿了么',
+            'dianping.com',
+            '大众点评'
+        ],
+        InvoiceType.TRANSPORT: [
+            'didiglobal.com',
+            '滴滴',
+            'didi',
+            'amap.com',
+            '高德',
+            'caocaokeji.cn',
+            '曹操出行'
+        ],
+        InvoiceType.TRAVEL: [
+            'ctrip.com',
+            '携程',
+            'ly.com',
+            '同程',
+            'fliggy.com',
+            '飞猪',
+            'hotel.com',
+            'agoda.com',
+            'booking.com',
+            '酒店预订'
+        ],
+        InvoiceType.TECH: [
+            'cloud.tencent.com',
+            '腾讯云',
+            'aliyun.com',
+            '阿里云',
+            'huaweicloud.com',
+            '华为云',
+            'jdcloud.com',
+            '京东云'
+        ],
+        InvoiceType.OPERATOR: [
+            '10086.cn',
+            '中国移动',
+            '10010.com',
+            '中国联通',
+            '189.cn',
+            '中国电信'
+        ],
+        InvoiceType.BANK: [
+            'cmbchina.com',
+            '招商银行',
+            'pingan.com',
+            '平安银行'
         ]
     }
     
@@ -118,6 +211,53 @@ class InvoiceAnalyzer:
         InvoiceType.TRAIN_12306: [
             'button:has-text("下载")',
             'a:has-text("PDF下载")',
+        ],
+        # ---- Phase 2 新增选择器模板 ----
+        InvoiceType.BAIWANG: [
+            'button:has-text("电子发票下载")',
+            'a:has-text("电子发票")',
+            'button:has-text("下载")',
+            '[class*="download-btn"]',
+        ],
+        InvoiceType.PIAOYITONG: [
+            'a:has-text("下载发票")',
+            'button:has-text("下载")',
+            '[class*="download-invoice"]',
+        ],
+        InvoiceType.EXPRESS: [
+            'a:has-text("下载电子发票")',
+            'button:has-text("下载")',
+            '[class*="invoice-download"]',
+        ],
+        InvoiceType.ECOMMERCE: [
+            'a:has-text("电子发票下载")',
+            'button:has-text("下载发票")',
+            '[class*="invoice-download"]',
+        ],
+        InvoiceType.TRANSPORT: [
+            'a:has-text("电子发票")',
+            'button:has-text("下载发票")',
+            '[class*="invoice-download"]',
+        ],
+        InvoiceType.TRAVEL: [
+            'a:has-text("电子发票")',
+            'button:has-text("下载")',
+            '[class*="invoice-download"]',
+        ],
+        InvoiceType.TECH: [
+            'a:has-text("电子发票")',
+            'button:has-text("开具发票")',
+            '[class*="invoice-btn"]',
+        ],
+        InvoiceType.OPERATOR: [
+            'a:has-text("电子发票")',
+            'button:has-text("下载")',
+            '[class*="invoice-download"]',
+        ],
+        InvoiceType.BANK: [
+            'a:has-text("电子发票")',
+            'button:has-text("下载")',
+            '[class*="invoice-download"]',
         ]
     }
     
